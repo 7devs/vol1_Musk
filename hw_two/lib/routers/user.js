@@ -20,8 +20,25 @@ r.route('/ageAvg')
         for (var i = 0; i < n; i++) {
             sum += userModel[i].age;
         }
-        ageAvg = sum / n;
-        res.send('average age: ' + ageAvg);
+        ageAvg = (sum / n).toString(); // send 不能直接只返回小于100的数字,会被认为是状态码。在工作中，会设计成｛ 'result' : 20 } api 一般都是返回json对象
+        res.send(ageAvg);
+    });
+
+// GET /search?company=xxx 搜索，返回公司名称包含搜索字符串的用户列表
+r.route('/search')
+    .get(function(req, res, next) {
+        var regex = new RegExp(req.query.company, 'i'),
+            result = [];
+        for (var i = 0; i < userModel.length; i++) {
+            if (regex.test(userModel[i].company)) {
+                result.push(userModel[i]);
+            }
+        }
+        if (result.length !==0) {
+            res.send(result);
+        } else {
+            res.status(404).send('Not Found!');
+        }
     });
 
 // GET /:id 获取指定索引用户的全名
@@ -49,7 +66,7 @@ r.route('/:id')
               res.send('Type of age must be number');
           }
           else {
-              userModel[index].age = req.body.age;
+              userModel[index].age = parseInt(req.body.age);
               res.send(userModel[index]);
           }
       } else {
@@ -68,7 +85,7 @@ r.route('/count/:sex')
                     count++;
                 }
             }
-            res.send(sex + ':' + count);
+            res.send(count.toString());
         } else {
             res.send('please choose the male or female');
         }
@@ -76,14 +93,5 @@ r.route('/count/:sex')
 
 
 
-
-
-// GET /search?company=xxx 搜索，返回公司名称包含搜索字符串的用户列表
-/*
-r.route('/search')
-    .get(function(req, res, next) {
-
-    });
-*/
 
 module.exports = r;

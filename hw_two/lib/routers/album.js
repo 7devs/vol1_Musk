@@ -51,7 +51,7 @@ r.route('/:id')
     .put(function(req, res, next) {
         var index = parseInt(req.params.id) - 1;
         if(index >= 0 && index < albumModel.length) {
-            albumModel[index].length = req.body.length;
+            albumModel[index].length = parseInt(req.body.length);
             albumModel[index].title = req.body.title;
             res.send(albumModel[index]);
         } else {
